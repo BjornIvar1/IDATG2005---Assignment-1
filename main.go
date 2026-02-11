@@ -2,6 +2,7 @@ package main
 
 import (
 	"IDATG2005---Assignment-1/handler"
+	"IDATG2005---Assignment-1/utils"
 	"log"
 	"net/http"
 	"os"
@@ -19,8 +20,8 @@ func main() {
 	router := http.NewServeMux()
 
 	// Set up and attach handler endpoints to router
-	router.HandleFunc(handler.DEFAULT_PATH, handler.EmptyHandler)
-	router.HandleFunc(handler.STATUS_PATH, handler.StatusHandler)
+	router.HandleFunc(utils.DEFAULT_PATH, handler.EmptyHandler)
+	router.HandleFunc(utils.STATUS_PATH, handler.StatusHandler)
 
 	// Start server
 	log.Println("Starting server on port " + port + " ...")

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"IDATG2005---Assignment-1/utils"
 	"fmt"
 	"net/http"
 )
@@ -12,9 +13,9 @@ func EmptyHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Offer information for redirection to paths
 	output := "This service does not provide any functionality on root path level. Please use the paths <a href=\"" +
-		STATUS_PATH + "\">" + "Status" + "</a>, " +
-		"<a href=\"" + EXCHANGE_PATH + "\">" + "Exchange" + "</a>, " +
-		"or <a href=\"" + INFO_PATH + "\">" + "Info" + "</a>."
+		utils.STATUS_PATH + "\">" + "Status" + "</a>, " +
+		"<a href=\"" + utils.EXCHANGE_PATH + "\">" + "Exchange" + "</a>, " +
+		"or <a href=\"" + utils.INFO_PATH + "\">" + "Info" + "</a>."
 
 	// Write output to client
 	_, err := fmt.Fprintf(w, "%v", output)
