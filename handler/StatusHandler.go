@@ -7,11 +7,7 @@ import (
 	"time"
 )
 
-/*
-StatusResponse
-This handler provides a simple status endpoint,
-which returns the uptime of the service in seconds.
-*/
+// StatusResponse represents the status
 type StatusResponse struct {
 	RestCountriesAPI int    `json:"restcountriesapi"`
 	CurrencyAPI      int    `json:"currenciesapi"`
@@ -19,16 +15,14 @@ type StatusResponse struct {
 	UptimeSeconds    int    `json:"uptime"`
 }
 
-// Start the timer
+// startTime Start the timer
 var startTime = time.Now()
 
-/*
-IsAPIUp
-Check if the APIs are up using http.Get function
-and return the status code. If there is an error,
-return 503 (Service Unavailable).
-*/
-func IsAPIUp(url string) int {
+// APIStatus
+// Checks if an external API is up by making a GET request,
+// and returns the HTTP status code.
+// Returns 503 if the service is unavailable
+func APIStatus(url string) int {
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -39,15 +33,13 @@ func IsAPIUp(url string) int {
 	return resp.StatusCode
 }
 
-/*
-StatusHandler
-This handler checks the uptime of the service and the status of the external APIs,
-and returns this information in a JSON response.
-*/
+// StatusHandler
+// This handler checks the uptime of the service and the status of the external APIs,
+// and returns this information in a JSON response.
 func StatusHandler(w http.ResponseWriter, r *http.Request) {
 	uptimeSeconds := int(time.Since(startTime).Seconds())
-	currencyAPIStatus := IsAPIUp(utils.CurrenciesApiUrl)
-	restCountriesAPIStatus := IsAPIUp(utils.RestCountriesApiUrl)
+	currencyAPIStatus := APIStatus(utils.CurrenciesApiUrl)
+	restCountriesAPIStatus := APIStatus(utils.RestCountriesApiUrl)
 
 	resp := StatusResponse{
 		RestCountriesAPI: restCountriesAPIStatus,
