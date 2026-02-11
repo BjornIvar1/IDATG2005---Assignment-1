@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	// Handle port assignment (either based on environment variable, or local override)
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -21,7 +20,7 @@ func main() {
 
 	// Set up and attach handler endpoints to router
 	router.HandleFunc(handler.DEFAULT_PATH, handler.EmptyHandler)
-	//router.HandleFunc(handler.STATUS_PATH, handler.LocationHandler)
+	router.HandleFunc(handler.STATUS_PATH, handler.StatusHandler)
 
 	// Start server
 	log.Println("Starting server on port " + port + " ...")
