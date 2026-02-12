@@ -1,25 +1,10 @@
 package handler
 
 import (
+	"IDATG2005---Assignment-1/structs"
 	"encoding/json"
 	"net/http"
 )
-
-// InfoResponse represents the information from a country,
-// using the REST countries API
-type InfoResponse struct {
-	Name struct {
-		Common   string `json:"common"`
-		Official string `json:"official"`
-	} `json:"name"`
-	Continents []string          `json:"continents"`
-	Population int               `json:"population"`
-	Area       float32           `json:"area"`
-	Languages  map[string]string `json:"languages"`
-	Borders    []string          `json:"borders"`
-	Flag       string            `json:"flag"`
-	Capital    []string          `json:"capital"`
-}
 
 // InfoHandler
 // Takes the country code as a path parameter, and makes a GET request to the API,
@@ -42,7 +27,7 @@ func InfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer resp.Body.Close()
 
-	var countryInfo []InfoResponse
+	var countryInfo []structs.InfoResponse
 	errJsonDecoder := json.NewDecoder(resp.Body).Decode(&countryInfo)
 
 	if errJsonDecoder != nil {

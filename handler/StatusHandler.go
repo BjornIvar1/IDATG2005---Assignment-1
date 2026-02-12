@@ -1,19 +1,12 @@
 package handler
 
 import (
+	"IDATG2005---Assignment-1/structs"
 	"IDATG2005---Assignment-1/utils"
 	"encoding/json"
 	"net/http"
 	"time"
 )
-
-// StatusResponse represents the status
-type StatusResponse struct {
-	RestCountriesAPI int    `json:"restcountriesapi"`
-	CurrencyAPI      int    `json:"currenciesapi"`
-	Version          string `json:"version"`
-	UptimeSeconds    int    `json:"uptime"`
-}
 
 // startTime Start the timer
 var startTime = time.Now()
@@ -41,7 +34,7 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 	currencyAPIStatus := APIStatus(utils.CurrenciesApiUrl)
 	restCountriesAPIStatus := APIStatus(utils.RestCountriesApiUrl)
 
-	resp := StatusResponse{
+	resp := structs.StatusResponse{
 		RestCountriesAPI: restCountriesAPIStatus,
 		CurrencyAPI:      currencyAPIStatus,
 		Version:          "v1",
