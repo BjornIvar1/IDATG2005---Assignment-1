@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+// EmptyHandler
+// handles requests to the root path and provides information about available endpoints.
 func EmptyHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Ensure interpretation as HTML by client (browser)
