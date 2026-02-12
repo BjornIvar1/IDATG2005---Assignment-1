@@ -35,7 +35,7 @@ func InfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		http.Error(w, "Country code is not valid", http.StatusNotFound)
 		return
 	}
@@ -43,7 +43,12 @@ func InfoHandler(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	var countryInfo []InfoResponse
-	json.NewDecoder(resp.Body).Decode(&countryInfo)
+	errJsonDecoder := json.NewDecoder(resp.Body).Decode(&countryInfo)
+
+	if errJsonDecoder != nil {
+		http.Error(w, "Failed to retrieve country information", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(countryInfo[0])
