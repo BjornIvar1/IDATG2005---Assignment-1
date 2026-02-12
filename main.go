@@ -22,6 +22,7 @@ func main() {
 	// Set up and attach handler endpoints to router
 	router.HandleFunc(utils.DefaultPath, handler.EmptyHandler)
 	router.HandleFunc(utils.StatusPath, handler.StatusHandler)
+	router.HandleFunc(utils.InfoPath, handler.InfoHandler)
 
 	// Start server
 	log.Println("Starting server on port " + port + " ...")
