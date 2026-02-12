@@ -1,8 +1,7 @@
 package structs
 
-// InfoResponse represents the information from a country,
-// using the REST countries API
-type InfoResponse struct {
+// RestCountryInfo represents the information using the REST Countries API
+type RestCountryInfo struct {
 	Name struct {
 		Common   string `json:"common"`
 		Official string `json:"official"`
@@ -14,4 +13,16 @@ type InfoResponse struct {
 	Borders    []string          `json:"borders"`
 	Flag       string            `json:"flag"`
 	Capital    []string          `json:"capital"`
+}
+
+// CountryInfoOut represents the information for my API response
+type CountryInfoOut struct {
+	Name       string            `json:"name"`
+	Continents []string          `json:"continents"`
+	Population int               `json:"population"`
+	Area       float64           `json:"area"`
+	Languages  map[string]string `json:"languages"`
+	Borders    []string          `json:"borders"`
+	Flag       string            `json:"flag"`
+	Capital    string            `json:"capital"`
 }

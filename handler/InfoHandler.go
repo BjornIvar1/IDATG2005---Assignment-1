@@ -6,6 +6,25 @@ import (
 	"net/http"
 )
 
+// MapToCountryInfo
+// Maps the response from the API to the CountryInfoOut struct
+func MapToCountryInfo(c structs.RestCountryInfo) structs.CountryInfoOut {
+	out := structs.CountryInfoOut{
+		Name:       c.Name.Common,
+		Continents: c.Continents,
+		Population: c.Population,
+		Area:       float64(c.Area),
+		Languages:  c.Languages,
+		Borders:    c.Borders,
+		Flag:       c.Flag,
+		Capital:    "",
+	}
+	if len(c.Capital) > 0 {
+		out.Capital = c.Capital[0]
+	}
+	return out
+}
+
 // InfoHandler
 // Takes the country code as a path parameter, and makes a GET request to the API,
 // and returns the information from the country
@@ -27,14 +46,16 @@ func InfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer resp.Body.Close()
 
-	var countryInfo []structs.InfoResponse
-	errJsonDecoder := json.NewDecoder(resp.Body).Decode(&countryInfo)
+	var restCountry []structs.RestCountryInfo
+	errJsonDecoder := json.NewDecoder(resp.Body).Decode(&restCountry)
 
 	if errJsonDecoder != nil {
 		http.Error(w, "Failed to retrieve country information", http.StatusInternalServerError)
 		return
 	}
 
+	output := MapToCountryInfo(restCountry[0])
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(countryInfo[0])
+	json.NewEncoder(w).Encode(output)
 }
