@@ -3,7 +3,7 @@ package utils
 // URL Paths as constants
 
 const DefaultPath = "/"
-const ExchangePath = "/exchange"
+const ExchangePath = "/exchange/{code}"
 const InfoPath = "/info/{code}"
 const StatusPath = "/status"
 const CurrenciesApiUrl = "http://129.241.150.113:9090/currency/NOK"
