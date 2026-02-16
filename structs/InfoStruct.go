@@ -11,8 +11,10 @@ type RestCountryInfo struct {
 	Area       float32           `json:"area"`
 	Languages  map[string]string `json:"languages"`
 	Borders    []string          `json:"borders"`
-	Flag       string            `json:"flag"`
-	Capital    []string          `json:"capital"`
+	Flags      struct {
+		PNG string `json:"png"`
+	}
+	Capital []string `json:"capital"`
 }
 
 // CountryInfoOut represents the information for my API response
@@ -23,6 +25,6 @@ type CountryInfoOut struct {
 	Area       float64           `json:"area"`
 	Languages  map[string]string `json:"languages"`
 	Borders    []string          `json:"borders"`
-	Flag       string            `json:"flag"`
+	Flags      string            `json:"flag"`
 	Capital    string            `json:"capital"`
 }

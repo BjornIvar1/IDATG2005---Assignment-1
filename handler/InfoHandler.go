@@ -16,7 +16,7 @@ func MapToCountryInfo(c structs.RestCountryInfo) structs.CountryInfoOut {
 		Area:       float64(c.Area),
 		Languages:  c.Languages,
 		Borders:    c.Borders,
-		Flag:       c.Flag,
+		Flags:      c.Flags.PNG,
 		Capital:    "",
 	}
 	if len(c.Capital) > 0 {
