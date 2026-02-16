@@ -23,6 +23,7 @@ func main() {
 	router.HandleFunc(utils.DefaultPath, handler.EmptyHandler)
 	router.HandleFunc(utils.StatusPath, handler.StatusHandler)
 	router.HandleFunc(utils.InfoPath, handler.InfoHandler)
+	router.HandleFunc(utils.ExchangePath, handler.ExchangeHandler)
 
 	// Start server
 	log.Println("Starting server on port " + port + " ...")
