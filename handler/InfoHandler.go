@@ -2,6 +2,7 @@ package handler
 
 import (
 	"IDATG2005---Assignment-1/structs"
+	"IDATG2005---Assignment-1/utils"
 	"encoding/json"
 	"net/http"
 )
@@ -31,7 +32,7 @@ func MapToCountryInfo(c structs.RestCountryInfo) structs.CountryInfoOut {
 // If the country code is not valid, it returns an error message with status code 404
 func InfoHandler(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
-	apiURL := "http://129.241.150.113:8080/v3.1/alpha/" + code
+	apiURL := utils.RestCountriesApiUrlBase + code
 
 	resp, err := http.Get(apiURL)
 	if err != nil {
