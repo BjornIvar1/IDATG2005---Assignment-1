@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-// emptyHandler
+// EmptyHandler
 // handles requests to the root path and provides information about available endpoints.
-func emptyHandler(w http.ResponseWriter, r *http.Request) {
+func EmptyHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Ensure interpretation as HTML by client (browser)
 	w.Header().Set("content-type", "text/html")

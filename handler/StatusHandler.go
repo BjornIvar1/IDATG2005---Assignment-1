@@ -26,10 +26,10 @@ func statusAPI(url string) int {
 	return resp.StatusCode
 }
 
-// statusHandler
+// StatusHandler
 // This handler checks the uptime of the service and the status of the external APIs,
 // and returns this information in a JSON response.
-func statusHandler(w http.ResponseWriter, r *http.Request) {
+func StatusHandler(w http.ResponseWriter, r *http.Request) {
 	uptimeSeconds := int(time.Since(startTime).Seconds())
 	currencyAPIStatus := statusAPI(utils.CurrenciesApiUrl)
 	restCountriesAPIStatus := statusAPI(utils.RestCountriesApiUrl)

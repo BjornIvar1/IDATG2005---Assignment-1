@@ -62,11 +62,11 @@ func fetchJSON(w http.ResponseWriter, url, fetchErrMsg, statusErrMsg string) (*h
 	return resp, true
 }
 
-// exchangeHandler
+// ExchangeHandler
 // Takes the country code as a path parameter, and makes GET requests to the APIs,
 // and returns the exchange rate information of the country and its borders.
 // If there is an error it will return an error message with the appropriate status code
-func exchangeHandler(w http.ResponseWriter, r *http.Request) {
+func ExchangeHandler(w http.ResponseWriter, r *http.Request) {
 	conCode := r.PathValue("code")
 
 	// Fetch the Country API
