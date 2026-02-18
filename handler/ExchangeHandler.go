@@ -27,30 +27,56 @@ func MapToExchangeOutput(c structs.ExchangeCountry, e structs.ExchangeResponse, 
 	return out
 }
 
+// decodeJSON
+// Decodes the JSON response from the API into the target struct
+// If there is an error during decoding, it returns an error message with status code 500
+func decodeJSON(w http.ResponseWriter, r *http.Response, target any, errMsg string) bool {
+	defer r.Body.Close()
+
+	if err := json.NewDecoder(r.Body).Decode(target); err != nil {
+		http.Error(w, errMsg, http.StatusInternalServerError)
+		return false
+	}
+
+	return true
+}
+
+// fetchJSON
+// Fetches the JSON response from the API and checks for errors
+// If there is an error during fetching, it returns an error message with status code 500
+// If the status code of the response is not 200, it returns an error message with status code 404
+func fetchJSON(w http.ResponseWriter, url, fetchErrMsg, statusErrMsg string) (*http.Response, bool) {
+	resp, err := http.Get(url)
+
+	if err != nil {
+		http.Error(w, fetchErrMsg, http.StatusInternalServerError)
+		return nil, false
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		resp.Body.Close()
+		http.Error(w, statusErrMsg, http.StatusNotFound)
+		return nil, false
+	}
+
+	return resp, true
+}
+
+// ExchangeHandler
+// Takes the country code as a path parameter, and makes GET requests to the APIs,
+// and returns the exchange rate information of the country and its borders.
+// If there is an error it will return an error message with the appropriate status code
 func ExchangeHandler(w http.ResponseWriter, r *http.Request) {
 	conCode := r.PathValue("code")
 
-	//Check Country API
-	apiURLCon := utils.RestCountriesApiUrlBase + conCode
-
-	conResp, err := http.Get(apiURLCon)
-	if err != nil {
-		http.Error(w, "Failed to fetch country information", http.StatusInternalServerError)
+	// Fetch the Country API
+	conResp, ok := fetchJSON(w, utils.RestCountriesApiUrlBase+conCode, "Failed to fetch country information", "Country code is not valid")
+	if !ok {
 		return
 	}
-
-	if conResp.StatusCode != http.StatusOK {
-		http.Error(w, "Country code is not valid", http.StatusNotFound)
-		return
-	}
-
-	defer conResp.Body.Close()
 
 	var exchangeCountry []structs.ExchangeCountry
-	conErrJsonDecoder := json.NewDecoder(conResp.Body).Decode(&exchangeCountry)
-
-	if conErrJsonDecoder != nil {
-		http.Error(w, "Failed to retrieve country information", http.StatusInternalServerError)
+	if !decodeJSON(w, conResp, &exchangeCountry, "Failed to retrieve country information") {
 		return
 	}
 
@@ -61,64 +87,38 @@ func ExchangeHandler(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 
-	// Check Currency API
-	apiURLCur := utils.RestCurrenciesApiUrlBase + currCode
-	respCur, err := http.Get(apiURLCur)
-	if err != nil {
-		http.Error(w, "Failed to fetch currency information", http.StatusInternalServerError)
-		return
-	}
-	defer respCur.Body.Close()
-
-	if respCur.StatusCode != http.StatusOK {
-		http.Error(w, "Exchange rate code is not valid", http.StatusNotFound)
+	// Fetch the Currency API
+	curResp, ok := fetchJSON(w, utils.RestCurrenciesApiUrlBase+currCode, "Failed to fetch currencies information", "Currencie code is not valid")
+	if !ok {
 		return
 	}
 
 	var exchangeResponse structs.ExchangeResponse
-	curErrJsonDecoder := json.NewDecoder(respCur.Body).Decode(&exchangeResponse)
-
-	if curErrJsonDecoder != nil {
-		http.Error(w, "Failed to retrieve currency information", http.StatusInternalServerError)
+	if !decodeJSON(w, curResp, &exchangeResponse, "Failed to retrieve currency information") {
 		return
 	}
 
-	// Get Borders and currency code of the country
+	// Get Borders and currency code of the country and stores it in a list
 	var borders []string
-	for _, borderCountry := range exchangeCountry[0].Borders {
-		apiURLBor := utils.RestCountriesApiUrlBase + borderCountry
-		respBor, err := http.Get(apiURLBor)
-
-		if err != nil {
-			http.Error(w, "Failed to fetch border country information", http.StatusInternalServerError)
-			return
-		}
-
-		defer respBor.Body.Close()
-
-		if respBor.StatusCode != http.StatusOK {
-			http.Error(w, "Country code is not valid", http.StatusNotFound)
+	for _, borderCode := range exchangeCountry[0].Borders {
+		borResp, ok := fetchJSON(w, utils.RestCountriesApiUrlBase+borderCode,
+			"Failed to fetch border country information", "Country code is not valid")
+		if !ok {
 			return
 		}
 
 		var borderCountry []structs.ExchangeCountry
-		borErrJsonDecoder := json.NewDecoder(respBor.Body).Decode(&borderCountry)
-
-		if borErrJsonDecoder != nil {
-			http.Error(w, "Failed to retrieve currency information", http.StatusInternalServerError)
+		if ok = decodeJSON(w, borResp, &borderCountry, "Failed to retrieve currency information"); !ok {
 			return
 		}
 
-		var borderCurrCode string
-		for key := range borderCountry[0].Currencies {
-			borderCurrCode = key
+		for borderCurrCode := range borderCountry[0].Currencies {
+			borders = append(borders, borderCurrCode)
 			break
 		}
-
-		borders = append(borders, borderCurrCode)
 	}
 
-	//My API
+	//My API-Response
 	output := MapToExchangeOutput(exchangeCountry[0], exchangeResponse, borders)
 
 	w.Header().Set("Content-Type", "application/json")
