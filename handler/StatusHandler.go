@@ -11,11 +11,11 @@ import (
 // startTime Start the timer
 var startTime = time.Now()
 
-// APIStatus
+// statusAPI
 // Checks if an external API is up by making a GET request,
 // and returns the HTTP status code.
 // Returns 503 if the service is unavailable
-func APIStatus(url string) int {
+func statusAPI(url string) int {
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -26,13 +26,13 @@ func APIStatus(url string) int {
 	return resp.StatusCode
 }
 
-// StatusHandler
+// statusHandler
 // This handler checks the uptime of the service and the status of the external APIs,
 // and returns this information in a JSON response.
-func StatusHandler(w http.ResponseWriter, r *http.Request) {
+func statusHandler(w http.ResponseWriter, r *http.Request) {
 	uptimeSeconds := int(time.Since(startTime).Seconds())
-	currencyAPIStatus := APIStatus(utils.CurrenciesApiUrl)
-	restCountriesAPIStatus := APIStatus(utils.RestCountriesApiUrl)
+	currencyAPIStatus := statusAPI(utils.CurrenciesApiUrl)
+	restCountriesAPIStatus := statusAPI(utils.RestCountriesApiUrl)
 
 	resp := structs.StatusResponse{
 		RestCountriesAPI: restCountriesAPIStatus,

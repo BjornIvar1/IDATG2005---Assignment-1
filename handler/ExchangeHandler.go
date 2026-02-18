@@ -9,7 +9,7 @@ import (
 
 // MapToExchangeOutput
 // Maps the response from the APIs to the ExchangeOutput struct
-func MapToExchangeOutput(c structs.ExchangeCountry, e structs.ExchangeResponse, b []string) structs.ExchangeOutput {
+func mapToExchangeOutput(c structs.ExchangeCountry, e structs.ExchangeResponse, b []string) structs.ExchangeOutput {
 	out := structs.ExchangeOutput{
 		Country:  c.Name.Common,
 		Basecode: e.BaseCode,
@@ -62,11 +62,11 @@ func fetchJSON(w http.ResponseWriter, url, fetchErrMsg, statusErrMsg string) (*h
 	return resp, true
 }
 
-// ExchangeHandler
+// exchangeHandler
 // Takes the country code as a path parameter, and makes GET requests to the APIs,
 // and returns the exchange rate information of the country and its borders.
 // If there is an error it will return an error message with the appropriate status code
-func ExchangeHandler(w http.ResponseWriter, r *http.Request) {
+func exchangeHandler(w http.ResponseWriter, r *http.Request) {
 	conCode := r.PathValue("code")
 
 	// Fetch the Country API
@@ -119,7 +119,7 @@ func ExchangeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//My API-Response
-	output := MapToExchangeOutput(exchangeCountry[0], exchangeResponse, borders)
+	output := mapToExchangeOutput(exchangeCountry[0], exchangeResponse, borders)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(output)
